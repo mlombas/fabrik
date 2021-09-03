@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Ropes</title>
+		<script src="util.js"></script>
+		<script src="rope.js"></script>
+		<script src="drawing.js"></script>
+	</head>
+	<body>
+		<canvas id="main_canvas"></canvas>
+		<script>
+			let rope = new Rope();
+			window.addEventListener("load", () => {
+				let canvas = document.querySelector("#main_canvas");
+				fill_element(canvas);
+
+				let renderer = new Renderer(canvas);
+
+				renderer.add_drawable(rope);
+			});
+
+			let dot = null;
+			document.addEventListener("contextmenu", evt => evt.preventDefault());
+			window.addEventListener("mousedown", evt => {
+				if(evt.button == 2)
+					dot = rope.get_dot(new Vec2(evt.clientX, evt.clientY));
+			});
+			window.addEventListener("mousemove", evt => {
+				if(dot !== null) 
+					dot.position = new Vec2(evt.clientX, evt.clientY);
+			});
+			window.addEventListener("mouseup", evt => {
+				if(evt.button == 0) 
+					rope.add_dot(
+						Dot.standard_size_dot(new Vec2(evt.clientX, evt.clientY))
+					);
+				else if(evt.button == 2) dot = null;
+			});
+		</script>
+	</body>
+</html>
