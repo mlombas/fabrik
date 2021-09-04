@@ -83,6 +83,9 @@ class Rope {
 		return null;
 	}
 
+	//Algorithm from
+	//FABRIK: A fast, iterative solver for the Inverse Kinematics problem
+	//https://www.researchgate.net/publication/220632147_FABRIK_A_fast_iterative_solver_for_the_Inverse_Kinematics_problem
 	fabrik(end) {
 		let d = 
 			Array.from(pair_elements(
