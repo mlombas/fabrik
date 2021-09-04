@@ -19,22 +19,20 @@
 				renderer.add_drawable(rope);
 			});
 
-			let dot = null;
+			let right_button_down = false;
 			document.addEventListener("contextmenu", evt => evt.preventDefault());
 			window.addEventListener("mousedown", evt => {
-				if(evt.button == 2)
-					dot = rope.get_dot(new Vec2(evt.clientX, evt.clientY));
+				right_button_down = evt.button == 2;
 			});
 			window.addEventListener("mousemove", evt => {
-				if(dot !== null) 
-					dot.position = new Vec2(evt.clientX, evt.clientY);
+				if(right_button_down) rope.fabrik(new Vec2(evt.clientX, evt.clientY)); 
 			});
 			window.addEventListener("mouseup", evt => {
 				if(evt.button == 0) 
 					rope.add_dot(
 						Dot.standard_size_dot(new Vec2(evt.clientX, evt.clientY))
 					);
-				else if(evt.button == 2) dot = null;
+				else if(evt.button == 2) right_button_down = false;
 			});
 		</script>
 	</body>

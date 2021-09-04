@@ -13,15 +13,7 @@ class Vec2 {
 	}
 
 	scale(s) {
-		return new Vec2(this.x * s, this.y * s);
-	}
-
-	normalized() {
-		return this.scale(1/this.length());
-	}
-
-	length() {
-		return (this.x**2 + this.y**2)**.5;
+		return new Vec2(this.x * s, this.x * s);
 	}
 
 	static distance_sq(v1, v2) {
@@ -29,11 +21,7 @@ class Vec2 {
 	}
 
 	static distance(v1, v2) {
-		return Vec2.distance_sq(v1, v2) ** .5;
-	}
-
-	static clone(v) {
-		return new Vec2(v.x, v.y);
+		return distance_sq(v1, v2) ** .5;
 	}
 }
 
@@ -46,6 +34,7 @@ class Dot {
 	}
 
 	static standard_size_dot(position) {
+		console.log("dot", position);
 		return new Dot(position, STANDARD_SIZE);
 	}
 
@@ -59,7 +48,7 @@ class Dot {
 }
 
 const STICK_SCALE = 0.5;
-const MAX_FABRIK_ITERATIONS = 3;
+const MAX_FABRIK_ITERATIONS = 100;
 const FABRIK_TOLERANCE = 1e-8;
 
 class Rope {
@@ -84,49 +73,19 @@ class Rope {
 	}
 
 	fabrik(end) {
-		let d = 
-			Array.from(pair_elements(
-				this.dots.map(d => d.position)
-			))
-			.map(({first, second}) => Vec2.distance(first, second));
-		let b = Vec2.clone(this.dots[0].position);
+		let d = Array.from(pair_elements(this.dots))
+					.map((pp, pn) => Vec2.distance(pp.substract(pn)));
+		let b = {...this.dots[0]};
 
 		let n_iter = 0;
-		while(
-			n_iter++ < MAX_FABRIK_ITERATIONS &&
-			Vec2.distance_sq(this.dots.at(-1).position, end) > FABRIK_TOLERANCE ** 2
-		) {
-			this._forward(end, d);
-			this._backward(b, d);
+		while(n_iter++ < MAX_FABRIK_ITERATIONS && Vec2.distance(this.dots.at(-1), end)) {
+			this._forward(end);
+			this._backward(b);
 		}
 	}
 
-	_forward(end, d) {
-		this.dots[this.dots.length - 1].position = end;
-
-		for(let i = this.dots.length - 2; i >= 0; i--) 
-			this.dots[i].position = this._move_vec_along_line(
-				this.dots[i].position,
-				this.dots[i + 1].position,
-				d[i]
-			);
-	}
-
-	_backward(start, d) {
-		this.dots[0].position = start;
-
-		for(let i = 1; i < this.dots.length; i++) 
-			this.dots[i].position = this._move_vec_along_line(
-				this.dots[i].position,
-				this.dots[i - 1].position,
-				d[i - 1]
-			);
-	}
-
-	_move_vec_along_line(to_move, fixed, distance) {
-		let unit_vector = to_move.substract(fixed).normalized();
-		let vector = unit_vector.scale(distance);
-		return fixed.add(vector);
+	_forward(end) {
+		for(let i = this.dots.length - 2; i >= 0
 	}
 
 	draw(ctx) {
